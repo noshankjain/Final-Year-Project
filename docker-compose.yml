@@ -1,0 +1,87 @@
+version: '3.9'
+
+services:
+  # ─── MongoDB ────────────────────────────────────────────────
+  mongodb:
+    image: mongo:7.0
+    container_name: cancer_dx_mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_DATABASE: cancer_diagnosis
+    volumes:
+      - mongo_data:/data/db
+      - ./database/mongo_init.js:/docker-entrypoint-initdb.d/mongo_init.js:ro
+    networks:
+      - cancer_dx_net
+
+  # ─── ML Microservice (FastAPI + PyTorch) ────────────────────
+  ml_service:
+    build:
+      context: ./ml_service
+      dockerfile: Dockerfile
+    container_name: cancer_dx_ml
+    restart: unless-stopped
+    ports:
+      - '8000:8000'
+    environment:
+      - DEVICE=cpu
+      - UPLOAD_DIR=/app/uploads
+      - MODEL_WEIGHTS_PATH=/app/weights/multimodal_best.pth
+    volumes:
+      - ./ml_service/uploads:/app/uploads
+      - ./ml_service/weights:/app/weights
+    networks:
+      - cancer_dx_net
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── Backend (Express + Mongoose) ───────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cancer_dx_backend
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/cancer_diagnosis
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=8h
+      - ML_SERVICE_URL=http://ml_service:8000
+      - UPLOAD_DIR=/app/uploads
+      - NODE_ENV=production
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      - mongodb
+      - ml_service
+    networks:
+      - cancer_dx_net
+
+  # ─── Frontend (React + Vite) ─────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cancer_dx_frontend
+    restart: unless-stopped
+    ports:
+      - '5173:80'
+    depends_on:
+      - backend
+    networks:
+      - cancer_dx_net
+
+volumes:
+  mongo_data:
+
+networks:
+  cancer_dx_net:
+    driver: bridge

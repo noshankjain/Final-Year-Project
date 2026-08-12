@@ -14,11 +14,12 @@ import InferenceResultPage from './pages/InferenceResultPage';
 
 const Layout = ({ children }) => {
   return (
-    <div className="flex h-screen overflow-hidden bg-navy-900">
+    // min-h-[100dvh] instead of h-screen — fixes iOS Safari address bar layout jump
+    <div className="flex min-h-[100dvh] overflow-hidden" style={{ background: 'var(--surface-base)' }}>
       <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Navbar />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
           {children}
         </main>
       </div>
@@ -30,13 +31,27 @@ const App = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Toaster position="top-right" toastOptions={{ className: 'glass text-slate-100', style: { background: '#1e293b', color: '#f1f5f9', border: '1px solid rgba(255,255,255,0.1)' } }} />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: 'var(--surface-overlay)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--surface-border-hi)',
+              borderRadius: 'var(--radius-md)',
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: '14px',
+            },
+            success: { iconTheme: { primary: '#00d4b4', secondary: '#041210' } },
+            error:   { iconTheme: { primary: '#f43f5e', secondary: '#ffffff' } },
+          }}
+        />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Navigate to="/dashboard" />} />
-          
+
           <Route path="/dashboard" element={<ProtectedRoute><Layout><DashboardPage /></Layout></ProtectedRoute>} />
-          <Route path="/cases" element={<ProtectedRoute><Layout><CasesListPage /></Layout></ProtectedRoute>} />
+          <Route path="/cases"     element={<ProtectedRoute><Layout><CasesListPage /></Layout></ProtectedRoute>} />
           <Route path="/cases/new" element={<ProtectedRoute><Layout><NewCasePage /></Layout></ProtectedRoute>} />
           <Route path="/cases/:id/results" element={<ProtectedRoute><Layout><InferenceResultPage /></Layout></ProtectedRoute>} />
         </Routes>

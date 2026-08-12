@@ -1,67 +1,71 @@
 import React, { useState } from 'react';
-import { Layers, Image as ImageIcon } from 'lucide-react';
-import { cn } from '../../utils/helpers';
+import { Sliders, Image as PhImage } from '@phosphor-icons/react';
 
+// GradCAMViewer — no uppercase tracking eyebrow, no neon blend modes
 const GradCAMViewer = ({ originalImagePath, gradcamImagePath }) => {
   const [showOverlay, setShowOverlay] = useState(true);
-
-  // In a real app, these would be absolute URLs from the backend
-  // For demo, we use placeholder gradients if not provided
   const imgUrl = showOverlay ? gradcamImagePath : originalImagePath;
 
   return (
-    <div className="card h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-slate-400 font-medium uppercase tracking-wider text-sm flex items-center gap-2">
-          <Layers size={16} />
-          <span>Spatial Attention (Grad-CAM)</span>
-        </h3>
-        
-        <div className="flex bg-navy-800 p-1 rounded-lg border border-white/10">
-          <button
-            onClick={() => setShowOverlay(false)}
-            className={cn(
-              "px-3 py-1.5 text-xs font-medium rounded-md transition-colors flex items-center gap-1.5",
-              !showOverlay ? "bg-indigo-500 text-white shadow-sm" : "text-slate-400 hover:text-white"
-            )}
-          >
-            <ImageIcon size={14} /> Original
-          </button>
-          <button
-            onClick={() => setShowOverlay(true)}
-            className={cn(
-              "px-3 py-1.5 text-xs font-medium rounded-md transition-colors flex items-center gap-1.5",
-              showOverlay ? "bg-purple-500 text-white shadow-sm" : "text-slate-400 hover:text-white"
-            )}
-          >
-            <Layers size={14} /> Heatmap
-          </button>
+    <div className="surface-elevated h-full flex flex-col p-6">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+          Spatial attention (Grad-CAM)
+        </p>
+
+        {/* Toggle — no purple, teal for active */}
+        <div
+          className="flex p-1 rounded-lg gap-1"
+          style={{ background: 'var(--surface-base)', border: '1px solid var(--surface-border)' }}
+        >
+          {[
+            { label: 'Original', value: false, icon: PhImage },
+            { label: 'Heatmap',  value: true,  icon: Sliders },
+          ].map(({ label, value, icon: Icon }) => (
+            <button
+              key={label}
+              onClick={() => setShowOverlay(value)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all"
+              style={{
+                background: showOverlay === value ? 'var(--surface-overlay)' : 'transparent',
+                color:      showOverlay === value ? (value ? 'var(--accent)' : 'var(--text-primary)') : 'var(--text-tertiary)',
+                border:     showOverlay === value ? '1px solid var(--surface-border-hi)' : '1px solid transparent',
+              }}
+            >
+              <Icon size={12} />
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="flex-1 relative rounded-xl overflow-hidden bg-navy-800 border border-white/5 min-h-[300px] flex items-center justify-center group">
+      {/* Image area — no pills overlaid on image (§9.F) */}
+      <div
+        className="flex-1 relative rounded-lg overflow-hidden min-h-[280px] flex items-center justify-center"
+        style={{ background: 'var(--surface-base)' }}
+      >
         {imgUrl ? (
-          <img 
-            src={imgUrl} 
-            alt="WSI View" 
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          <img
+            src={imgUrl}
+            alt={showOverlay ? 'Grad-CAM heatmap overlay' : 'Original histopathology image'}
+            className="w-full h-full object-contain"
+            loading="lazy"
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500">
-            <div className={cn(
-              "w-full h-full absolute inset-0 opacity-20",
-              showOverlay ? "bg-gradient-to-br from-indigo-500 via-purple-500 to-rose-500" : "bg-slate-700"
-            )}></div>
-            <ImageIcon size={48} className="mb-4 relative z-10 opacity-50" />
-            <p className="relative z-10 text-sm">Image data unavailable</p>
+          <div className="flex flex-col items-center gap-2">
+            <PhImage size={36} style={{ color: 'var(--text-tertiary)' }} />
+            <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
+              Image unavailable
+            </p>
           </div>
         )}
       </div>
 
-      <p className="text-xs text-slate-400 mt-4 text-center">
-        {showOverlay 
-          ? "Red/warm regions indicate tissue patterns highly associated with the model's prediction." 
-          : "Original H&E stained Whole Slide Image crop."}
+      {/* Caption — plain, no fake photo attribution (§9.F) */}
+      <p className="text-xs mt-3 text-center" style={{ color: 'var(--text-tertiary)' }}>
+        {showOverlay
+          ? 'Warm regions indicate tissue patterns most influential for the model prediction.'
+          : 'Original H&E stained histopathology patch (224px representative crop).'}
       </p>
     </div>
   );

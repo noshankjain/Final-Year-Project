@@ -3,23 +3,50 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
-      fontFamily: { sans: ['Inter', 'sans-serif'] },
+      fontFamily: {
+        sans: ['Outfit', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
       colors: {
-        navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
-        accent: { DEFAULT: '#6366f1', light: '#818cf8', dark: '#4f46e5' },
+        // Base surfaces — off-black, never pure #000
+        surface: {
+          base:    '#080c14',
+          raised:  '#0e1521',
+          overlay: '#141d2e',
+        },
+        // Single accent — electric teal. Color consistency lock.
+        teal: {
+          DEFAULT: '#00d4b4',
+          dim:     'rgba(0,212,180,0.15)',
+          glow:    'rgba(0,212,180,0.25)',
+        },
+        // Semantic roles
+        malignant: '#f43f5e',
+        benign:    '#10b981',
+        caution:   '#f59e0b',
+      },
+      borderRadius: {
+        // Shape consistency lock: 12px base
+        sm:   '6px',
+        md:   '12px',
+        lg:   '16px',
+        xl:   '20px',
+        full: '9999px',
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-out',
-        'slide-up': 'slideUp 0.4s ease-out',
-        'pulse-glow': 'pulseGlow 2s infinite',
-        'spin-slow': 'spin 3s linear infinite',
+        'fade-up':  'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both',
+        'shimmer':  'shimmer 1.6s ease infinite',
       },
       keyframes: {
-        fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
-        slideUp: { from: { opacity: '0', transform: 'translateY(20px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
-        pulseGlow: { '0%,100%': { boxShadow: '0 0 15px rgba(99,102,241,0.4)' }, '50%': { boxShadow: '0 0 30px rgba(99,102,241,0.8)' } },
+        fadeUp: {
+          from: { opacity: '0', transform: 'translateY(14px)' },
+          to:   { opacity: '1', transform: 'translateY(0)' },
+        },
+        shimmer: {
+          '0%':   { backgroundPosition: '200% 0' },
+          '100%': { backgroundPosition: '-200% 0' },
+        },
       },
-      backdropBlur: { xs: '2px' },
     },
   },
   plugins: [],

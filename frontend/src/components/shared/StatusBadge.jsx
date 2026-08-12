@@ -1,23 +1,36 @@
 import React from 'react';
-import { cn } from '../../utils/helpers';
-import { CheckCircle2, Clock, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle, Clock, Warning, CircleNotch } from '@phosphor-icons/react';
+
+// StatusBadge — Phosphor icons, CSS variable colors, no purple
+// Shape lock: rounded-md (6px) — small element uses --radius-sm
+const STATUS_MAP = {
+  complete:   { label: 'Complete',   icon: CheckCircle,  bg: 'rgba(16,185,129,0.12)',  color: '#10b981',        border: 'rgba(16,185,129,0.2)' },
+  pending:    { label: 'Pending',    icon: Clock,        bg: 'rgba(245,158,11,0.12)',  color: '#f59e0b',        border: 'rgba(245,158,11,0.2)' },
+  processing: { label: 'Processing', icon: CircleNotch,  bg: 'rgba(0,212,180,0.12)',   color: 'var(--accent)',  border: 'rgba(0,212,180,0.2)' },
+  failed:     { label: 'Failed',     icon: Warning,      bg: 'rgba(244,63,94,0.12)',   color: '#f43f5e',        border: 'rgba(244,63,94,0.2)' },
+};
 
 const StatusBadge = ({ status }) => {
-  const normalized = status?.toLowerCase() || 'pending';
-  
-  const config = {
-    pending: { color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', icon: Clock },
-    processing: { color: 'bg-blue-500/10 text-blue-400 border-blue-500/20 animate-pulse', icon: Loader2 },
-    complete: { color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', icon: CheckCircle2 },
-    failed: { color: 'bg-rose-500/10 text-rose-400 border-rose-500/20', icon: AlertCircle },
-  };
-
-  const { color, icon: Icon } = config[normalized] || config.pending;
+  const key = status?.toLowerCase() || 'pending';
+  const cfg = STATUS_MAP[key] || STATUS_MAP.pending;
+  const Icon = cfg.icon;
 
   return (
-    <span className={cn('inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border', color)}>
-      <Icon className={cn('w-3.5 h-3.5', normalized === 'processing' && 'animate-spin')} />
-      <span className="capitalize">{normalized}</span>
+    <span
+      className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-md"
+      style={{
+        background:  cfg.bg,
+        color:       cfg.color,
+        border:      `1px solid ${cfg.border}`,
+        letterSpacing: '0.03em',
+      }}
+    >
+      <Icon
+        size={11}
+        weight="bold"
+        className={key === 'processing' ? 'animate-spin' : ''}
+      />
+      {cfg.label}
     </span>
   );
 };

@@ -1,4 +1,9 @@
-# ── Node / Frontend ───────────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════
+#  OncoSight — .gitignore
+#  Everything here is excluded from version control.
+# ════════════════════════════════════════════════════════
+
+# ── Node / Frontend ──────────────────────────────────────
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -6,8 +11,11 @@ yarn-error.log*
 .pnpm-debug.log*
 dist/
 build/
+.cache/
+.parcel-cache/
+.next/
 
-# ── Python / ML Service ───────────────────────────────────────────────────────
+# ── Python / ML Service ──────────────────────────────────
 __pycache__/
 *.pyc
 *.pyo
@@ -17,44 +25,88 @@ __pycache__/
 .eggs/
 .venv/
 venv/
+env/
 *.so
+.pytest_cache/
+htmlcov/
+.coverage
+*.cover
 
-# ── Environment files (NEVER commit real secrets) ─────────────────────────────
+# ── Environment files (NEVER commit secrets) ─────────────
 .env
 .env.local
+.env.development
 .env.production
-# Keep .env.example committed as a template
+# Keep .env.example files as templates
 !.env.example
 !backend/.env.example
 !ml_service/.env.example
 
-# ── Model weights (large binary files, store externally) ──────────────────────
+# ── Model weights (large binary files — ~99 MB each) ─────
+# Download from Releases or train locally — see README
 ml_service/weights/*.pth
 ml_service/weights/*.pt
-# Keep the directory and training log
-!ml_service/weights/.gitkeep
+ml_service/weights/*.bin
 ml_service/weights/training_log.json
+# Keep the directory itself
+!ml_service/weights/.gitkeep
 
-# ── Uploaded files (user data, not source code) ───────────────────────────────
-ml_service/uploads/
-backend/uploads/
+# ── Uploaded files (runtime user data, not source code) ──
+ml_service/uploads/*
+backend/uploads/*
 !ml_service/uploads/.gitkeep
 !backend/uploads/.gitkeep
 
-# ── Datasets (too large for git, store externally or use DVC) ────────────────
+# ── Datasets (too large for Git — use Kaggle directly) ───
+# See README for download instructions
 Datasets/
+ml_service/data/
+data/
 
-# ── OS junk ───────────────────────────────────────────────────────────────────
+# ── OS generated files ────────────────────────────────────
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 desktop.ini
+$RECYCLE.BIN/
 
-# ── IDE ───────────────────────────────────────────────────────────────────────
+# ── IDE and editor files ──────────────────────────────────
 .vscode/
+!.vscode/extensions.json
 .idea/
 *.sublime-project
 *.sublime-workspace
+*.swp
+*.swo
+*~
 
-# ── Logs ─────────────────────────────────────────────────────────────────────
+# ── Logs ─────────────────────────────────────────────────
 *.log
 logs/
+npm-debug.log*
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ── Testing / Coverage ────────────────────────────────────
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+
+# ── Docker (local override files only) ───────────────────
+docker-compose.override.yml
+
+# ── Temporary / scratch files ─────────────────────────────
+*.tmp
+*.temp
+*.bak
+*.swp
+.freebuff/
+
+# ── Skills / Agent config (internal tooling only) ─────────
+.agents/
+skills-lock.json

@@ -8,19 +8,19 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
-        // Base surfaces — off-black, never pure #000
+        // Base surfaces — Cosmic (#23212C) palette
         surface: {
-          base:    '#080c14',
-          raised:  '#0e1521',
-          overlay: '#141d2e',
+          base:    '#23212C',
+          raised:  '#2B293A',
+          overlay: '#333143',
         },
-        // Single accent — electric teal. Color consistency lock.
-        teal: {
-          DEFAULT: '#00d4b4',
-          dim:     'rgba(0,212,180,0.15)',
-          glow:    'rgba(0,212,180,0.25)',
+        // Single accent — Vanilla (#F1FEC8). Color consistency lock.
+        vanilla: {
+          DEFAULT: '#F1FEC8',
+          dim:     'rgba(241,254,200,0.12)',
+          glow:    'rgba(241,254,200,0.22)',
         },
-        // Semantic roles
+        // Semantic roles — unchanged (functional, not brand)
         malignant: '#f43f5e',
         benign:    '#10b981',
         caution:   '#f59e0b',

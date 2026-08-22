@@ -123,7 +123,7 @@ const DashboardPage = () => {
       <button
         onClick={() => navigate('/cases/new')}
         className="fixed bottom-8 right-8 w-14 h-14 rounded-xl flex items-center justify-center shadow-lg z-40 transition-transform hover:scale-105 active:scale-95"
-        style={{ background: 'var(--accent)', color: '#041210', boxShadow: '0 8px 24px var(--accent-glow)' }}
+        style={{ background: 'var(--accent)', color: '#23212C', boxShadow: '0 8px 24px var(--accent-glow)' }}
         title="New case"
         id="fab-new-case"
         aria-label="Create new case"

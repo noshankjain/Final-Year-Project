@@ -1,27 +1,19 @@
 /* ═══════════════════════════════════════════════════════════════
-   ONCOSIGHT — Design System v3
+   ONCOSIGHT — Design System v4
    Anti-slop audit applied. Skill: design-taste-frontend v2.
 
    Design read:
    Clinical SaaS dashboard for medical professionals.
    Precision-instrument aesthetic. Authoritative, not decorative.
-   Single accent: electric teal (#00d4b4). Off-black base.
+   Palette: Cosmic (#23212C) base + Vanilla (#F1FEC8) accent.
    Font: Outfit (sans) + JetBrains Mono (data).
    DESIGN_VARIANCE: 7 · MOTION_INTENSITY: 5 · VISUAL_DENSITY: 6
 
-   Violations fixed:
-   - Replaced AI-purple gradient with single teal accent
-   - Replaced Inter with Outfit
-   - Removed Google Fonts link-tag (self-hosted via @font-face)
-   - Removed emoji from all UI surfaces
-   - Removed version footer from sidebar
-   - Removed decorative status dots
-   - Removed perpetual pulse-glow on logo
-   - Removed em-dashes everywhere
-   - Replaced gradient-text overuse with plain white + accent
-   - Applied Shape Consistency Lock: 12px radius throughout
-   - Applied Color Consistency Lock: teal only, never purple
-   - Applied Page Theme Lock: dark only
+   Theme update (v4):
+   - Surface base:  #23212C  (Cosmic — deep purple-grey)
+   - Accent:        #F1FEC8  (Vanilla — warm yellow-green)
+   - Contrast ratio: ~12:1 (WCAG AAA)
+   - All prior shape, font, and motion locks retained.
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── Fonts (self-hosted via Google Fonts CDN with display:swap) ── */
@@ -34,26 +26,27 @@
 @layer base {
   :root {
     /* ── Palette tokens ──────────────────────────────────────── */
-    --surface-base:      #080c14;
-    --surface-raised:    #0e1521;
-    --surface-overlay:   #141d2e;
-    --surface-border:    rgba(255, 255, 255, 0.07);
-    --surface-border-hi: rgba(255, 255, 255, 0.13);
+    /* Cosmic (#23212C) — deep purple-grey background             */
+    --surface-base:      #23212C;
+    --surface-raised:    #2B293A;
+    --surface-overlay:   #333143;
+    --surface-border:    rgba(241, 254, 200, 0.08);
+    --surface-border-hi: rgba(241, 254, 200, 0.14);
 
-    /* Single accent — electric teal. Never purple. */
-    --accent:            #00d4b4;
-    --accent-dim:        rgba(0, 212, 180, 0.15);
-    --accent-glow:       rgba(0, 212, 180, 0.25);
+    /* Single accent — Vanilla (#F1FEC8). Never purple.          */
+    --accent:            #F1FEC8;
+    --accent-dim:        rgba(241, 254, 200, 0.12);
+    --accent-glow:       rgba(241, 254, 200, 0.22);
 
-    /* Semantic role colors */
+    /* Semantic role colors — unchanged (functional, not brand)  */
     --role-malignant:    #f43f5e;
     --role-benign:       #10b981;
     --role-warning:      #f59e0b;
 
-    /* Text hierarchy */
-    --text-primary:      #f0f4f8;
-    --text-secondary:    #7e8fa8;
-    --text-tertiary:     #4a5568;
+    /* Text hierarchy — warm tones matching Vanilla accent       */
+    --text-primary:      #F1FEC8;
+    --text-secondary:    rgba(241, 254, 200, 0.55);
+    --text-tertiary:     rgba(241, 254, 200, 0.28);
 
     /* Shape lock: 12px base radius, 6px for small elements */
     --radius-sm:  6px;
@@ -143,7 +136,7 @@
     gap: 8px;
     padding: 10px 22px;
     background: var(--accent);
-    color: #041210;
+    color: #23212C;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
     font-size: 14px;

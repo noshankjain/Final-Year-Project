@@ -42,7 +42,7 @@ const App = () => {
               fontFamily: "'Outfit', sans-serif",
               fontSize: '14px',
             },
-            success: { iconTheme: { primary: '#00d4b4', secondary: '#041210' } },
+            success: { iconTheme: { primary: '#F1FEC8', secondary: '#23212C' } },
             error:   { iconTheme: { primary: '#f43f5e', secondary: '#ffffff' } },
           }}
         />

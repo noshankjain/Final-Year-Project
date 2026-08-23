@@ -84,11 +84,11 @@
     background: var(--surface-base);
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--accent-dim);
     border-radius: var(--radius-pill);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.22);
+    background: var(--accent-glow);
   }
 
   /* ── Focus ring ────────────────────────────────────────────── */
@@ -118,9 +118,9 @@
     border-radius: var(--radius-lg);
   }
 
-  /* Subtle glass — only where backdrop blur makes semantic sense */
+  /* Subtle glass — Cosmic-based (#23212C), Vanilla-tinted border */
   .glass-surface {
-    background: rgba(14, 21, 33, 0.72);
+    background: rgba(35, 33, 44, 0.78);
     backdrop-filter: blur(16px) saturate(1.4);
     -webkit-backdrop-filter: blur(16px) saturate(1.4);
     border: 1px solid var(--surface-border-hi);
@@ -214,7 +214,7 @@
   /* ── Inputs ────────────────────────────────────────────────── */
   .input-field {
     width: 100%;
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(241, 254, 200, 0.03);
     border: 1px solid var(--surface-border-hi);
     border-radius: var(--radius-md);
     padding: 11px 16px;
@@ -229,7 +229,7 @@
   }
   .input-field:focus {
     border-color: var(--accent);
-    background: rgba(0, 212, 180, 0.04);
+    background: var(--accent-dim);
   }
 
   /* ── Navigation ────────────────────────────────────────────── */
@@ -248,7 +248,7 @@
   }
   .nav-item:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--accent-dim);
   }
   .nav-item-active {
     color: var(--accent);
@@ -318,13 +318,13 @@
     background: var(--surface-border);
   }
 
-  /* ── Skeleton loader (layout-matching shape, no generic spinner) */
+  /* ── Skeleton loader — Vanilla-tinted shimmer ────────────────── */
   .skeleton {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.04) 0%,
-      rgba(255, 255, 255, 0.09) 50%,
-      rgba(255, 255, 255, 0.04) 100%
+      rgba(241, 254, 200, 0.03) 0%,
+      rgba(241, 254, 200, 0.07) 50%,
+      rgba(241, 254, 200, 0.03) 100%
     );
     background-size: 200% 100%;
     animation: shimmer 1.6s ease infinite;
@@ -354,5 +354,20 @@
     width: 32px;
     background: var(--accent);
     border-radius: var(--radius-pill);
+  }
+
+  /* ── Accent chip — Patient Mode, system labels ───────────────── */
+  .chip-accent {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--accent-glow);
   }
 }

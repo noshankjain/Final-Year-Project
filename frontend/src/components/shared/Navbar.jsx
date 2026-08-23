@@ -26,7 +26,7 @@ const Navbar = () => {
     <header
       className="h-[60px] flex items-center justify-between px-6 flex-shrink-0 sticky top-0 z-40"
       style={{
-        background:  'rgba(35, 33, 44, 0.85)',
+        background:  'rgba(241, 236, 230, 0.90)',
         borderBottom: '1px solid var(--surface-border)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',

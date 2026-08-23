@@ -54,7 +54,7 @@ const Sidebar = () => {
         {/* Icon mark — geometric, not emoji */}
         <div
           className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
-          style={{ background: 'var(--accent)', color: '#23212C' }}
+          style={{ background: 'var(--accent)', color: '#F1ECE6' }}
         >
           <Dna size={18} weight="bold" />
         </div>

@@ -48,7 +48,7 @@ const LoginPage = () => {
           <div className="flex items-center gap-3">
             <div
               className="w-9 h-9 rounded-md flex items-center justify-center"
-              style={{ background: 'var(--accent)', color: '#23212C' }}
+              style={{ background: 'var(--accent)', color: '#F1ECE6' }}
             >
               <Dna size={20} weight="bold" />
             </div>
@@ -91,7 +91,7 @@ const LoginPage = () => {
           <div className="flex items-center gap-3 mb-8 md:hidden">
             <div
               className="w-8 h-8 rounded-md flex items-center justify-center"
-              style={{ background: 'var(--accent)', color: '#23212C' }}
+              style={{ background: 'var(--accent)', color: '#F1ECE6' }}
             >
               <Dna size={18} weight="bold" />
             </div>

@@ -91,8 +91,8 @@ const App = () => {
               fontFamily: "'Outfit', sans-serif",
               fontSize: '14px',
             },
-            success: { iconTheme: { primary: '#F1FEC8', secondary: '#23212C' } },
-            error:   { iconTheme: { primary: '#f43f5e', secondary: '#ffffff' } },
+            success: { iconTheme: { primary: '#7D4047', secondary: '#F1ECE6' } },
+            error:   { iconTheme: { primary: '#C03040', secondary: '#F1ECE6' } },
           }}
         />
         <AnimatedRoutes />

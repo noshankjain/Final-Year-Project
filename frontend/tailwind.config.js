@@ -8,22 +8,22 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
-        // Base surfaces — Cosmic (#23212C) palette
+        // Base surfaces — Alabaster Cream palette (v5)
         surface: {
-          base:    '#23212C',
-          raised:  '#2B293A',
-          overlay: '#333143',
+          base:    '#F1ECE6',  // Alabaster Cream — page background
+          raised:  '#DDD5CD',  // Warm Greige — cards, sidebar
+          overlay: '#CFC7BE',  // Deeper greige — overlays, dropdowns
         },
-        // Single accent — Vanilla (#F1FEC8). Color consistency lock.
-        vanilla: {
-          DEFAULT: '#F1FEC8',
-          dim:     'rgba(241,254,200,0.12)',
-          glow:    'rgba(241,254,200,0.22)',
+        // Single accent — Vintage Rosewood (#7D4047). Color consistency lock.
+        rosewood: {
+          DEFAULT: '#7D4047',
+          dim:     'rgba(125,64,71,0.10)',
+          glow:    'rgba(125,64,71,0.22)',
         },
-        // Semantic roles — unchanged (functional, not brand)
-        malignant: '#f43f5e',
-        benign:    '#10b981',
-        caution:   '#f59e0b',
+        // Semantic roles — adjusted for light background
+        malignant: '#C03040',
+        benign:    '#2B7A57',
+        caution:   '#966A28',
       },
       borderRadius: {
         // Shape consistency lock: 12px base

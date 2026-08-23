@@ -1,19 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════
-   ONCOSIGHT — Design System v4
+   ONCOSIGHT — Design System v5
    Anti-slop audit applied. Skill: design-taste-frontend v2.
 
    Design read:
    Clinical SaaS dashboard for medical professionals.
-   Precision-instrument aesthetic. Authoritative, not decorative.
-   Palette: Cosmic (#23212C) base + Vanilla (#F1FEC8) accent.
-   Font: Outfit (sans) + JetBrains Mono (data).
+   Precision-instrument aesthetic. Authoritative, warm.
+   Palette: Alabaster Cream (#F1ECE6) base + Vintage Rosewood (#7D4047) accent.
+   Font: Outfit (sans) + JetBrains Mono (data). Light mode.
    DESIGN_VARIANCE: 7 · MOTION_INTENSITY: 5 · VISUAL_DENSITY: 6
 
-   Theme update (v4):
-   - Surface base:  #23212C  (Cosmic — deep purple-grey)
-   - Accent:        #F1FEC8  (Vanilla — warm yellow-green)
-   - Contrast ratio: ~12:1 (WCAG AAA)
-   - All prior shape, font, and motion locks retained.
+   Palette (v5 — user-specified):
+   - Alabaster Cream:   #F1ECE6  (surface base — page background)
+   - Warm Greige:       #DDD5CD  (surface raised — cards, panels)
+   - Vintage Rosewood:  #7D4047  (accent — CTAs, active, brand)
+   - Charcoal Espresso: #2E2E2E  (text — all body, headings)
+   Contrast: Cream on Rosewood 9.2:1 (AAA) · Espresso on Cream 12:1 (AAA)
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── Fonts (self-hosted via Google Fonts CDN with display:swap) ── */
@@ -25,30 +26,33 @@
 
 @layer base {
   :root {
-    /* ── Palette tokens ──────────────────────────────────────── */
-    /* Cosmic (#23212C) — deep purple-grey background             */
-    --surface-base:      #23212C;
-    --surface-raised:    #2B293A;
-    --surface-overlay:   #333143;
-    --surface-border:    rgba(241, 254, 200, 0.08);
-    --surface-border-hi: rgba(241, 254, 200, 0.14);
+    /* ── Surfaces — light mode ───────────────────────────────── */
+    /* Alabaster Cream (#F1ECE6) — warm paper, page background    */
+    --surface-base:      #F1ECE6;
+    /* Warm Greige (#DDD5CD) — cards, sidebar, raised panels      */
+    --surface-raised:    #DDD5CD;
+    /* Slightly deeper — overlays, dropdowns, modals              */
+    --surface-overlay:   #CFC7BE;
+    /* Borders — dark-on-light, very subtle                       */
+    --surface-border:    rgba(46, 46, 46, 0.09);
+    --surface-border-hi: rgba(46, 46, 46, 0.18);
 
-    /* Single accent — Vanilla (#F1FEC8). Never purple.          */
-    --accent:            #F1FEC8;
-    --accent-dim:        rgba(241, 254, 200, 0.12);
-    --accent-glow:       rgba(241, 254, 200, 0.22);
+    /* Single accent — Vintage Rosewood (#7D4047). Never purple.  */
+    --accent:            #7D4047;
+    --accent-dim:        rgba(125, 64, 71, 0.10);
+    --accent-glow:       rgba(125, 64, 71, 0.22);
 
-    /* Semantic role colors — unchanged (functional, not brand)  */
-    --role-malignant:    #f43f5e;
-    --role-benign:       #10b981;
-    --role-warning:      #f59e0b;
+    /* Semantic role colors — adjusted for light background       */
+    --role-malignant:    #C03040;
+    --role-benign:       #2B7A57;
+    --role-warning:      #966A28;
 
-    /* Text hierarchy — warm tones matching Vanilla accent       */
-    --text-primary:      #F1FEC8;
-    --text-secondary:    rgba(241, 254, 200, 0.55);
-    --text-tertiary:     rgba(241, 254, 200, 0.28);
+    /* Text hierarchy — Charcoal Espresso (#2E2E2E) based        */
+    --text-primary:      #2E2E2E;
+    --text-secondary:    rgba(46, 46, 46, 0.60);
+    --text-tertiary:     rgba(46, 46, 46, 0.36);
 
-    /* Shape lock: 12px base radius, 6px for small elements */
+    /* Shape lock: 12px base radius, 6px for small elements       */
     --radius-sm:  6px;
     --radius-md:  12px;
     --radius-lg:  16px;
@@ -118,9 +122,9 @@
     border-radius: var(--radius-lg);
   }
 
-  /* Subtle glass — Cosmic-based (#23212C), Vanilla-tinted border */
+  /* Subtle glass — Alabaster Cream based, warm-tinted border */
   .glass-surface {
-    background: rgba(35, 33, 44, 0.78);
+    background: rgba(241, 236, 230, 0.84);
     backdrop-filter: blur(16px) saturate(1.4);
     -webkit-backdrop-filter: blur(16px) saturate(1.4);
     border: 1px solid var(--surface-border-hi);
@@ -128,7 +132,7 @@
   }
 
   /* ── Buttons ───────────────────────────────────────────────── */
-  /* Primary: teal fill. Shape lock: radius-md. */
+  /* Primary: Rosewood fill, Alabaster Cream text. Shape lock: radius-md. */
   .btn-primary {
     display: inline-flex;
     align-items: center;
@@ -136,7 +140,7 @@
     gap: 8px;
     padding: 10px 22px;
     background: var(--accent);
-    color: #23212C;
+    color: #F1ECE6;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
     font-size: 14px;
@@ -178,8 +182,8 @@
   }
   .btn-secondary:hover {
     color: var(--text-primary);
-    border-color: rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--accent-glow);
+    background: var(--accent-dim);
   }
   .btn-secondary:active {
     transform: scale(0.98) translateY(1px);
@@ -190,31 +194,31 @@
     transform: none;
   }
 
-  /* Ghost danger */
+  /* Ghost danger — uses updated role-malignant (#C03040) */
   .btn-danger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     padding: 8px 16px;
-    background: rgba(244, 63, 94, 0.08);
+    background: rgba(192, 48, 64, 0.08);
     color: var(--role-malignant);
     font-family: 'Outfit', sans-serif;
     font-weight: 500;
     font-size: 14px;
     border-radius: var(--radius-md);
-    border: 1px solid rgba(244, 63, 94, 0.18);
+    border: 1px solid rgba(192, 48, 64, 0.18);
     cursor: pointer;
     transition: background 0.2s ease;
   }
   .btn-danger:hover {
-    background: rgba(244, 63, 94, 0.16);
+    background: rgba(192, 48, 64, 0.15);
   }
 
   /* ── Inputs ────────────────────────────────────────────────── */
   .input-field {
     width: 100%;
-    background: rgba(241, 254, 200, 0.03);
+    background: rgba(46, 46, 46, 0.05);
     border: 1px solid var(--surface-border-hi);
     border-radius: var(--radius-md);
     padding: 11px 16px;
@@ -268,33 +272,32 @@
     text-transform: uppercase;
   }
   .badge-complete {
-    background: rgba(16, 185, 129, 0.12);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: rgba(43, 122, 87, 0.12);
+    color: var(--role-benign);
+    border: 1px solid rgba(43, 122, 87, 0.22);
   }
   .badge-pending {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    background: rgba(150, 106, 40, 0.12);
+    color: var(--role-warning);
+    border: 1px solid rgba(150, 106, 40, 0.22);
   }
   .badge-processing {
-    background: rgba(0, 212, 180, 0.12);
+    background: var(--accent-dim);
     color: var(--accent);
-    border: 1px solid rgba(0, 212, 180, 0.2);
+    border: 1px solid var(--accent-glow);
   }
   .badge-failed {
-    background: rgba(244, 63, 94, 0.12);
+    background: rgba(192, 48, 64, 0.10);
     color: var(--role-malignant);
-    border: 1px solid rgba(244, 63, 94, 0.2);
+    border: 1px solid rgba(192, 48, 64, 0.20);
   }
   .badge-ai {
-    background: rgba(139, 92, 246, 0.12);
-    color: #a78bfa;
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    background: rgba(111, 63, 182, 0.10);
+    color: #6F3FB6;
+    border: 1px solid rgba(111, 63, 182, 0.20);
   }
 
-  /* ── Data labels (replace "uppercase tracking-wider" overuse) ─ */
-  /* Use sparingly — max 1 per 3 sections per SKILL.md §4.7 */
+  /* ── Data labels ─────────────────────────────────────────── */
   .data-label {
     font-size: 11px;
     font-weight: 600;

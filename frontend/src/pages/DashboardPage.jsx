@@ -9,7 +9,7 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 
 // Stat card — CountUp on value, stagger reveal via motion.div (Prompt 4.3 + 4.1)
-const StatCard = ({ label, value, displayValue, decimals = 0, suffix = '', prefix = '', icon: Icon, accent, delay = 0 }) => {
+const StatCard = ({ label, value, decimals = 0, suffix = '', prefix = '', icon: Icon, accent, accentDim, delay = 0 }) => {
   const reduced = useReducedMotion();
 
   return (
@@ -25,7 +25,7 @@ const StatCard = ({ label, value, displayValue, decimals = 0, suffix = '', prefi
         </p>
         <div
           className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
-          style={{ background: `${accent}18`, color: accent }}
+          style={{ background: accentDim || 'var(--accent-dim)', color: accent }}
         >
           <Icon size={16} weight="regular" />
         </div>
@@ -103,14 +103,16 @@ const DashboardPage = () => {
               label="Total Cases"
               value={cases.length}
               icon={Users}
-              accent="var(--accent)"
+              accent="#7D4047"
+              accentDim="rgba(125,64,71,0.12)"
               delay={0}
             />
             <StatCard
               label="Awaiting Analysis"
               value={pending}
               icon={Clock}
-              accent="#f59e0b"
+              accent="#966A28"
+              accentDim="rgba(150,106,40,0.12)"
               delay={0.06}
             />
             <StatCard
@@ -118,7 +120,8 @@ const DashboardPage = () => {
               value={malignantPct}
               suffix="%"
               icon={Pulse}
-              accent="#f43f5e"
+              accent="#C03040"
+              accentDim="rgba(192,48,64,0.12)"
               delay={0.12}
             />
             <StatCard
@@ -126,7 +129,8 @@ const DashboardPage = () => {
               value={avgSurvival}
               suffix="%"
               icon={ChartLineUp}
-              accent="#10b981"
+              accent="#2B7A57"
+              accentDim="rgba(43,122,87,0.12)"
               delay={0.18}
             />
           </>
@@ -173,7 +177,7 @@ const DashboardPage = () => {
       <button
         onClick={() => navigate('/cases/new')}
         className="fixed bottom-8 right-8 w-14 h-14 rounded-xl flex items-center justify-center shadow-lg z-40 transition-transform hover:scale-105 active:scale-95"
-        style={{ background: 'var(--accent)', color: '#23212C', boxShadow: '0 8px 24px var(--accent-glow)' }}
+        style={{ background: 'var(--accent)', color: '#F1ECE6', boxShadow: '0 8px 24px var(--accent-glow)' }}
         title="New case"
         id="fab-new-case"
         aria-label="Create new case"

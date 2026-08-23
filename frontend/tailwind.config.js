@@ -8,11 +8,11 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
-        // Base surfaces — Alabaster Cream palette (v5)
+        // Base surfaces — inverted for contrast (Greige bg, Cream cards)
         surface: {
-          base:    '#F1ECE6',  // Alabaster Cream — page background
-          raised:  '#DDD5CD',  // Warm Greige — cards, sidebar
-          overlay: '#CFC7BE',  // Deeper greige — overlays, dropdowns
+          base:    '#DDD5CD',  // Warm Greige — page background
+          raised:  '#F1ECE6',  // Alabaster Cream — cards (pop off background)
+          overlay: '#CFC7BE',  // Darker greige — sidebar, overlays
         },
         // Single accent — Vintage Rosewood (#7D4047). Color consistency lock.
         rosewood: {

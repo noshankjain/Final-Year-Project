@@ -26,10 +26,11 @@ const Navbar = () => {
     <header
       className="h-[60px] flex items-center justify-between px-6 flex-shrink-0 sticky top-0 z-40"
       style={{
-        background:  'rgba(241, 236, 230, 0.90)',
-        borderBottom: '1px solid var(--surface-border)',
+        background:  'rgba(207, 199, 190, 0.95)',
+        borderBottom: '1px solid var(--surface-border-hi)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
+        boxShadow: '0 1px 0 rgba(46,46,46,0.08)',
       }}
     >
       {/* Left: page title — plain h1, no gradient, no giant scale */}

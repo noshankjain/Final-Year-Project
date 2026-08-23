@@ -26,37 +26,44 @@
 
 @layer base {
   :root {
-    /* ── Surfaces — light mode ───────────────────────────────── */
-    /* Alabaster Cream (#F1ECE6) — warm paper, page background    */
-    --surface-base:      #F1ECE6;
-    /* Warm Greige (#DDD5CD) — cards, sidebar, raised panels      */
-    --surface-raised:    #DDD5CD;
-    /* Slightly deeper — overlays, dropdowns, modals              */
+    /* ── Surfaces — light mode (inverted for contrast) ──────────
+       KEY INSIGHT: page bg = darker Greige, cards = lighter Cream.
+       Cards float visibly above the background.                   */
+
+    /* Warm Greige (#DDD5CD) — page background. The "stage".      */
+    --surface-base:      #DDD5CD;
+    /* Alabaster Cream (#F1ECE6) — cards, panels. Pop off the bg. */
+    --surface-raised:    #F1ECE6;
+    /* Sidebar / overlays — slightly darker than page bg          */
     --surface-overlay:   #CFC7BE;
-    /* Borders — dark-on-light, very subtle                       */
-    --surface-border:    rgba(46, 46, 46, 0.09);
-    --surface-border-hi: rgba(46, 46, 46, 0.18);
+    /* Borders — dark-on-light, strong enough to define edges     */
+    --surface-border:    rgba(46, 46, 46, 0.14);
+    --surface-border-hi: rgba(46, 46, 46, 0.26);
 
-    /* Single accent — Vintage Rosewood (#7D4047). Never purple.  */
+    /* Single accent — Vintage Rosewood (#7D4047).                */
     --accent:            #7D4047;
-    --accent-dim:        rgba(125, 64, 71, 0.10);
-    --accent-glow:       rgba(125, 64, 71, 0.22);
+    --accent-dim:        rgba(125, 64, 71, 0.12);
+    --accent-glow:       rgba(125, 64, 71, 0.28);
 
-    /* Semantic role colors — adjusted for light background       */
+    /* Semantic role colors                                        */
     --role-malignant:    #C03040;
     --role-benign:       #2B7A57;
     --role-warning:      #966A28;
 
-    /* Text hierarchy — Charcoal Espresso (#2E2E2E) based        */
+    /* Text — Charcoal Espresso (#2E2E2E). Stronger opacity tiers. */
     --text-primary:      #2E2E2E;
-    --text-secondary:    rgba(46, 46, 46, 0.60);
-    --text-tertiary:     rgba(46, 46, 46, 0.36);
+    --text-secondary:    rgba(46, 46, 46, 0.72);
+    --text-tertiary:     rgba(46, 46, 46, 0.50);
 
-    /* Shape lock: 12px base radius, 6px for small elements       */
+    /* Shape lock: 12px base radius, 6px small                    */
     --radius-sm:  6px;
     --radius-md:  12px;
     --radius-lg:  16px;
     --radius-pill: 9999px;
+
+    /* Card shadow — lifts cards off the Greige background        */
+    --shadow-card: 0 1px 4px rgba(46,46,46,0.10), 0 4px 12px rgba(46,46,46,0.07);
+    --shadow-raised: 0 2px 8px rgba(46,46,46,0.12), 0 8px 24px rgba(46,46,46,0.08);
   }
 
   * {
@@ -109,26 +116,30 @@
 }
 
 @layer components {
-  /* ── Surface cards ─────────────────────────────────────────── */
+  /* ── Surface cards — Alabaster Cream on Greige background ────── */
+  /* Shadow lifts the card visibly off the page — the key to contrast */
   .surface {
     background: var(--surface-raised);
     border: 1px solid var(--surface-border);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
   }
 
   .surface-elevated {
-    background: var(--surface-overlay);
+    background: var(--surface-raised);
     border: 1px solid var(--surface-border-hi);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-raised);
   }
 
-  /* Subtle glass — Alabaster Cream based, warm-tinted border */
+  /* Glass — Alabaster Cream, warm blur */
   .glass-surface {
-    background: rgba(241, 236, 230, 0.84);
+    background: rgba(241, 236, 230, 0.90);
     backdrop-filter: blur(16px) saturate(1.4);
     -webkit-backdrop-filter: blur(16px) saturate(1.4);
     border: 1px solid var(--surface-border-hi);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
   }
 
   /* ── Buttons ───────────────────────────────────────────────── */
@@ -216,27 +227,29 @@
   }
 
   /* ── Inputs ────────────────────────────────────────────────── */
+  /* White background — clearly distinct from both the Greige page and Cream cards */
   .input-field {
     width: 100%;
-    background: rgba(46, 46, 46, 0.05);
+    background: #FFFFFF;
     border: 1px solid var(--surface-border-hi);
     border-radius: var(--radius-md);
     padding: 11px 16px;
     color: var(--text-primary);
     font-family: 'Outfit', sans-serif;
     font-size: 14px;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     outline: none;
+    box-shadow: 0 1px 2px rgba(46,46,46,0.06);
   }
   .input-field::placeholder {
     color: var(--text-tertiary);
   }
   .input-field:focus {
     border-color: var(--accent);
-    background: var(--accent-dim);
+    box-shadow: 0 0 0 3px var(--accent-dim);
   }
 
-  /* ── Navigation ────────────────────────────────────────────── */
+  /* ── Navigation ─────────────────────────────────────────────── */
   .nav-item {
     display: flex;
     align-items: center;
@@ -252,7 +265,7 @@
   }
   .nav-item:hover {
     color: var(--text-primary);
-    background: var(--accent-dim);
+    background: rgba(46, 46, 46, 0.08);
   }
   .nav-item-active {
     color: var(--accent);

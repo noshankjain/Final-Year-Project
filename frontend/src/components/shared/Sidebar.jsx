@@ -19,8 +19,20 @@ const navItems = [
 ];
 
 const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  // Persist collapse state across refreshes — Prompt 3.2
+  const [collapsed, setCollapsed] = useState(() => {
+    try { return localStorage.getItem('sidebar_collapsed') === 'true'; }
+    catch { return false; }
+  });
   const { user } = useAuth();
+
+  const toggle = () => {
+    setCollapsed(v => {
+      const next = !v;
+      try { localStorage.setItem('sidebar_collapsed', String(next)); } catch {}
+      return next;
+    });
+  };
 
   return (
     <aside
@@ -76,7 +88,7 @@ const Sidebar = () => {
 
       {/* Collapse toggle */}
       <button
-        onClick={() => setCollapsed(!collapsed)}
+        onClick={toggle}
         className="absolute -right-3 top-[76px] w-6 h-6 rounded-full flex items-center justify-center z-50 transition-colors"
         style={{
           background:   'var(--surface-overlay)',

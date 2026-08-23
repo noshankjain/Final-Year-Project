@@ -1,10 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'motion/react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/shared/ProtectedRoute';
 import Navbar from './components/shared/Navbar';
 import Sidebar from './components/shared/Sidebar';
+import PageTransition from './components/shared/PageTransition';
 
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -12,18 +14,65 @@ import CasesListPage from './pages/CasesListPage';
 import NewCasePage from './pages/NewCasePage';
 import InferenceResultPage from './pages/InferenceResultPage';
 
-const Layout = ({ children }) => {
-  return (
-    // min-h-[100dvh] instead of h-screen — fixes iOS Safari address bar layout jump
-    <div className="flex min-h-[100dvh] overflow-hidden" style={{ background: 'var(--surface-base)' }}>
-      <Sidebar />
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <Navbar />
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-          {children}
-        </main>
-      </div>
+const Layout = ({ children }) => (
+  // min-h-[100dvh] instead of h-screen — fixes iOS Safari address bar layout jump
+  <div className="flex min-h-[100dvh] overflow-hidden" style={{ background: 'var(--surface-base)' }}>
+    <Sidebar />
+    <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+      <Navbar />
+      <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        {children}
+      </main>
     </div>
+  </div>
+);
+
+/**
+ * AnimatedRoutes — must be a child of BrowserRouter so it can call useLocation.
+ * AnimatePresence key = location.pathname so React unmounts/remounts on route change.
+ * mode="wait" ensures exit animation completes before the next page enters.
+ */
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={
+          <PageTransition><LoginPage /></PageTransition>
+        } />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Layout>
+              <PageTransition><DashboardPage /></PageTransition>
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/cases" element={
+          <ProtectedRoute>
+            <Layout>
+              <PageTransition><CasesListPage /></PageTransition>
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/cases/new" element={
+          <ProtectedRoute>
+            <Layout>
+              <PageTransition><NewCasePage /></PageTransition>
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/cases/:id/results" element={
+          <ProtectedRoute>
+            <Layout>
+              <PageTransition><InferenceResultPage /></PageTransition>
+            </Layout>
+          </ProtectedRoute>
+        } />
+      </Routes>
+    </AnimatePresence>
   );
 };
 
@@ -46,15 +95,7 @@ const App = () => {
             error:   { iconTheme: { primary: '#f43f5e', secondary: '#ffffff' } },
           }}
         />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<Navigate to="/dashboard" />} />
-
-          <Route path="/dashboard" element={<ProtectedRoute><Layout><DashboardPage /></Layout></ProtectedRoute>} />
-          <Route path="/cases"     element={<ProtectedRoute><Layout><CasesListPage /></Layout></ProtectedRoute>} />
-          <Route path="/cases/new" element={<ProtectedRoute><Layout><NewCasePage /></Layout></ProtectedRoute>} />
-          <Route path="/cases/:id/results" element={<ProtectedRoute><Layout><InferenceResultPage /></Layout></ProtectedRoute>} />
-        </Routes>
+        <AnimatedRoutes />
       </AuthProvider>
     </BrowserRouter>
   );

@@ -12,41 +12,42 @@ import {
 import api from '../services/api';
 
 // ─── Mode selector card ───────────────────────────────────────────────────────
-const ModeCard = ({ icon: Icon, title, description, badge, color, selected, onClick }) => (
+const ModeCard = ({ icon: Icon, title, description, badge, selected, onClick }) => (
   <button
     onClick={onClick}
-    className={`
-      w-full text-left p-6 rounded-2xl border-2 transition-all duration-300
-      ${selected
-        ? `border-${color}-500 bg-${color}-500/10 shadow-lg shadow-${color}-500/10`
-        : 'border-white/10 bg-white/3 hover:border-white/25 hover:bg-white/5'}
-    `}
+    className="w-full text-left p-6 rounded-2xl border-2 transition-all duration-300"
+    style={{
+      borderColor: selected ? 'var(--accent)' : 'var(--surface-border)',
+      background: selected ? 'var(--accent-dim)' : 'var(--surface-raised)',
+      boxShadow: selected ? 'var(--shadow-raised)' : 'var(--shadow-card)',
+    }}
   >
     <div className="flex items-start gap-4">
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-        selected ? `bg-${color}-500/20 text-${color}-400` : 'bg-white/5 text-slate-400'
-      }`}>
+      <div
+        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+        style={{ background: selected ? 'var(--accent-glow)' : 'var(--surface-base)', color: selected ? 'var(--accent)' : 'var(--text-tertiary)' }}
+      >
         <Icon size={22} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <h3 className={`font-bold text-base ${selected ? 'text-white' : 'text-slate-300'}`}>
+          <h3 className="font-bold text-base" style={{ color: selected ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
             {title}
           </h3>
           {badge && (
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${
-              selected
-                ? `bg-${color}-500/30 text-${color}-300`
-                : 'bg-white/10 text-slate-400'
-            }`}>{badge}</span>
+            <span
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide"
+              style={{ background: selected ? 'var(--accent-glow)' : 'var(--surface-base)', color: selected ? 'var(--accent)' : 'var(--text-tertiary)' }}
+            >{badge}</span>
           )}
         </div>
-        <p className="text-sm text-slate-400 leading-relaxed">{description}</p>
+        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{description}</p>
       </div>
-      <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-all ${
-        selected ? `border-${color}-500 bg-${color}-500` : 'border-slate-600'
-      }`}>
-        {selected && <div className="w-2 h-2 rounded-full bg-white" />}
+      <div
+        className="w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-all"
+        style={{ borderColor: selected ? 'var(--accent)' : 'var(--surface-border-hi)', background: selected ? 'var(--accent)' : 'transparent' }}
+      >
+        {selected && <div className="w-2 h-2 rounded-full" style={{ background: '#F1ECE6' }} />}
       </div>
     </div>
   </button>
@@ -56,9 +57,8 @@ const ModeCard = ({ icon: Icon, title, description, badge, color, selected, onCl
 const NewCasePage = () => {
   const navigate = useNavigate();
 
-  // Mode: 'patient' | 'clinician' | null (not selected yet)
   const [mode, setMode] = useState(null);
-  const [step, setStep] = useState(0); // 0=mode-select, 1=image, 2=data, 3=review
+  const [step, setStep] = useState(0);
   const [wsiFile, setWsiFile] = useState(null);
   const [patientAge, setPatientAge] = useState('');
   const [clinicalData, setClinicalData] = useState({
@@ -75,7 +75,6 @@ const NewCasePage = () => {
     setClinicalData(prev => ({ ...prev, [field]: value }));
   };
 
-  // ── Stepper config per mode ──────────────────────────────────────────────────
   const patientSteps = [
     { num: 1, title: 'Upload Scan', icon: Upload },
     { num: 2, title: 'Your Age',    icon: User },
@@ -88,7 +87,6 @@ const NewCasePage = () => {
   ];
   const steps = mode === 'patient' ? patientSteps : clinicianSteps;
 
-  // ── Validation ───────────────────────────────────────────────────────────────
   const validateStep = () => {
     if (step === 1 && !wsiFile) {
       toast.error('Please upload an image to continue'); return false;
@@ -110,7 +108,6 @@ const NewCasePage = () => {
 
   const nextStep = () => {
     if (!validateStep()) return;
-    // Show disclaimer before final submit step
     if (step === 2 && mode === 'patient' && !disclaimerAccepted) {
       setShowDisclaimer(true);
       return;
@@ -129,17 +126,13 @@ const NewCasePage = () => {
     setStep(1);
   };
 
-  // ── Submission ───────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       let clinicalPayload;
-
       if (mode === 'patient') {
-        // Patient mode: only age — ML service will estimate the rest
         clinicalPayload = { age: parseFloat(patientAge) };
       } else {
-        // Clinician mode: full clinical panel
         clinicalPayload = {
           age:            parseFloat(clinicalData.age),
           tumor_size:     parseFloat(clinicalData.tumor_size),
@@ -181,11 +174,10 @@ const NewCasePage = () => {
     }
   };
 
-  // ── Render helpers ───────────────────────────────────────────────────────────
   const progressPct = step === 0 ? 0 : ((step - 1) / (steps.length - 1)) * 100;
 
   return (
-    <div className="max-w-4xl mx-auto w-full animate-fade-in relative pb-10">
+    <div className="max-w-4xl mx-auto w-full animate-fade-up relative pb-10">
       {isSubmitting && <LoadingOverlay message={submitStatus || 'Processing...'} />}
       {showDisclaimer && (
         <DisclaimerModal
@@ -196,18 +188,18 @@ const NewCasePage = () => {
 
       {/* Page header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-2">New Diagnostic Case</h1>
-        <p className="text-slate-400">
+        <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>New Diagnostic Case</h1>
+        <p style={{ color: 'var(--text-secondary)' }}>
           AI-powered multimodal breast cancer screening.
         </p>
       </div>
 
       {/* ── STEP 0: Mode Selector ── */}
       {step === 0 && (
-        <div className="card animate-slide-up">
+        <div className="surface p-6 animate-fade-up">
           <div className="text-center mb-8">
-            <h2 className="text-xl font-bold text-white mb-2">Who is submitting this case?</h2>
-            <p className="text-slate-400 text-sm">
+            <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Who is submitting this case?</h2>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Choose your profile so we can tailor the data requirements.
             </p>
           </div>
@@ -218,7 +210,6 @@ const NewCasePage = () => {
               title="I'm a Patient"
               description="I only have my scan image. I don't have access to biopsy reports or lab results. The AI will estimate my clinical profile from the image."
               badge="Image + Age only"
-              color="indigo"
               selected={mode === 'patient'}
               onClick={() => setMode('patient')}
             />
@@ -227,18 +218,17 @@ const NewCasePage = () => {
               title="I'm a Clinician / Researcher"
               description="I have the full clinical panel including biopsy results, receptor status, genomic data, and pathology grade."
               badge="Full clinical data"
-              color="purple"
               selected={mode === 'clinician'}
               onClick={() => setMode('clinician')}
             />
           </div>
 
           {/* Info box */}
-          <div className="mt-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 flex gap-3">
-            <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-blue-300 leading-relaxed">
-              <strong>Patient Mode</strong> uses{' '}
-              <span className="text-white font-medium">radiomics-based cross-modal imputation</span>{' '}
+          <div className="mt-6 p-4 rounded-xl flex gap-3" style={{ background: 'var(--accent-dim)', border: '1px solid var(--accent-glow)' }}>
+            <Info className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              <strong style={{ color: 'var(--text-primary)' }}>Patient Mode</strong> uses{' '}
+              <span style={{ color: 'var(--accent)' }}>radiomics-based cross-modal imputation</span>{' '}
               — your scan image is analysed to estimate likely molecular markers, rather than
               using generic population averages. This preserves biological correlation for
               better accuracy.
@@ -249,7 +239,8 @@ const NewCasePage = () => {
             <button
               onClick={() => mode && setStep(1)}
               disabled={!mode}
-              className={`btn-primary flex items-center gap-2 ${!mode ? 'opacity-40 cursor-not-allowed' : ''}`}
+              className="btn-primary flex items-center gap-2"
+              style={{ opacity: !mode ? 0.4 : 1, cursor: !mode ? 'not-allowed' : 'pointer' }}
             >
               Continue <ChevronRight size={18} />
             </button>
@@ -263,16 +254,17 @@ const NewCasePage = () => {
           {/* Mode badge */}
           <div className="mb-6 flex items-center gap-2">
             {mode === 'patient'
-              ? <span className="flex items-center gap-1.5 text-xs font-semibold text-indigo-300 bg-indigo-500/15 px-3 py-1.5 rounded-full border border-indigo-500/25">
+              ? <span className="chip-accent flex items-center gap-1.5">
                   <User size={12} /> Patient Mode — Image + Age
                 </span>
-              : <span className="flex items-center gap-1.5 text-xs font-semibold text-purple-300 bg-purple-500/15 px-3 py-1.5 rounded-full border border-purple-500/25">
+              : <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: 'var(--accent-dim)', color: 'var(--accent)', border: '1px solid var(--accent-glow)' }}>
                   <Stethoscope size={12} /> Clinician Mode — Full Panel
                 </span>
             }
             <button
               onClick={() => { setStep(0); setMode(null); }}
-              className="text-xs text-slate-500 hover:text-slate-300 transition-colors underline underline-offset-2"
+              className="text-xs hover:underline underline-offset-2 transition-colors"
+              style={{ color: 'var(--text-tertiary)' }}
             >
               Change
             </button>
@@ -280,40 +272,48 @@ const NewCasePage = () => {
 
           {/* Stepper */}
           <div className="flex items-center justify-between mb-10 relative">
-            <div className="absolute left-0 top-6 w-full h-0.5 bg-white/10 -z-10 rounded-full">
+            <div className="absolute left-0 top-6 w-full h-0.5 -z-10 rounded-full" style={{ background: 'var(--surface-border)' }}>
               <div
-                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
-                style={{ width: `${progressPct}%` }}
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${progressPct}%`, background: 'var(--accent)' }}
               />
             </div>
             {steps.map((s) => (
               <div key={s.num} className="flex flex-col items-center gap-2">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${
-                  step > s.num
-                    ? 'bg-emerald-500 border-navy-900 text-white'
-                    : step === s.num
-                    ? 'bg-indigo-500 border-navy-900 text-white'
-                    : 'bg-navy-800 border-navy-900 text-slate-500'
-                }`}>
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center border-4 transition-all duration-300"
+                  style={{
+                    borderColor: 'var(--surface-base)',
+                    background: step > s.num
+                      ? 'var(--role-benign)'
+                      : step === s.num
+                        ? 'var(--accent)'
+                        : 'var(--surface-overlay)',
+                    color: step >= s.num ? '#F1ECE6' : 'var(--text-tertiary)',
+                  }}
+                >
                   {step > s.num ? <CheckCircle2 size={20} /> : <s.icon size={20} />}
                 </div>
-                <span className={`text-xs font-medium ${step >= s.num ? 'text-indigo-400' : 'text-slate-500'}`}>
+                <span
+                  className="text-xs font-medium"
+                  style={{ color: step >= s.num ? 'var(--accent)' : 'var(--text-tertiary)' }}
+                >
                   {s.title}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="card min-h-[400px] flex flex-col">
+          <div className="surface min-h-[400px] flex flex-col p-6">
             <div className="flex-1">
 
               {/* ── Step 1: Upload image ── */}
               {step === 1 && (
-                <div className="animate-slide-up">
-                  <h2 className="text-lg font-semibold text-white mb-1">
+                <div className="animate-fade-up">
+                  <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
                     {mode === 'patient' ? 'Upload Your Scan Image' : 'Histopathology Image Upload'}
                   </h2>
-                  <p className="text-sm text-slate-400 mb-4">
+                  <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
                     {mode === 'patient'
                       ? 'Upload your MRI, mammogram, or histology scan (PNG, JPG, TIFF).'
                       : 'Upload a histopathology image. The AI analyses a 224×224 representative patch from the image.'}
@@ -324,14 +324,14 @@ const NewCasePage = () => {
 
               {/* ── Step 2 (Patient): Age input ── */}
               {step === 2 && mode === 'patient' && (
-                <div className="animate-slide-up max-w-md mx-auto">
-                  <h2 className="text-lg font-semibold text-white mb-1">Your Age</h2>
-                  <p className="text-sm text-slate-400 mb-6">
+                <div className="animate-fade-up max-w-md mx-auto">
+                  <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Your Age</h2>
+                  <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
                     Age is used alongside your scan to estimate your clinical profile.
                     All other parameters will be estimated by AI from the image.
                   </p>
 
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
                     Age (years)
                   </label>
                   <input
@@ -344,10 +344,10 @@ const NewCasePage = () => {
                   />
 
                   {/* What AI will estimate */}
-                  <div className="mt-6 p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                  <div className="mt-6 p-4 rounded-xl" style={{ background: 'var(--accent-dim)', border: '1px solid var(--accent-glow)' }}>
                     <div className="flex items-center gap-2 mb-3">
-                      <Sparkles className="w-4 h-4 text-indigo-400" />
-                      <p className="text-xs font-semibold text-indigo-300 uppercase tracking-wide">
+                      <Sparkles className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+                      <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--accent)' }}>
                         AI will estimate from your scan:
                       </p>
                     </div>
@@ -358,17 +358,17 @@ const NewCasePage = () => {
                         'BRCA1',
                       ].map(f => (
                         <div key={f} className="flex items-center gap-1.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-                          <span className="text-xs text-slate-400">{f}</span>
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent)' }} />
+                          <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{f}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Ethical notice */}
-                  <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                    <p className="text-xs text-amber-300 leading-relaxed">
-                      ⚠ A disclaimer about research use and the importance of consulting
+                  <div className="mt-4 p-3 rounded-xl" style={{ background: 'rgba(150,106,40,0.08)', border: '1px solid rgba(150,106,40,0.2)' }}>
+                    <p className="text-xs leading-relaxed" style={{ color: 'var(--role-warning)' }}>
+                      A disclaimer about research use and the importance of consulting
                       a doctor will appear before submission.
                     </p>
                   </div>
@@ -377,9 +377,9 @@ const NewCasePage = () => {
 
               {/* ── Step 2 (Clinician): Full clinical form ── */}
               {step === 2 && mode === 'clinician' && (
-                <div className="animate-slide-up">
-                  <h2 className="text-lg font-semibold text-white mb-1">Patient Clinical Information</h2>
-                  <p className="text-sm text-slate-400 mb-4">
+                <div className="animate-fade-up">
+                  <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Patient Clinical Information</h2>
+                  <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
                     All fields below are used by the tabular AI branch. Higher data quality = higher result confidence.
                   </p>
                   <ClinicalForm values={clinicalData} onChange={handleClinicalChange} />
@@ -388,37 +388,37 @@ const NewCasePage = () => {
 
               {/* ── Step 3: Review & Submit ── */}
               {step === 3 && (
-                <div className="animate-slide-up space-y-5">
-                  <h2 className="text-lg font-semibold text-white mb-1">Review & Analyse</h2>
+                <div className="animate-fade-up space-y-5">
+                  <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Review & Analyse</h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Image summary */}
-                    <div className="glass p-4 rounded-xl border border-indigo-500/20 bg-indigo-500/5">
-                      <h3 className="text-xs font-semibold text-indigo-400 mb-2 uppercase tracking-wide">
+                    <div className="p-4 rounded-xl" style={{ background: 'var(--surface-base)', border: '1px solid var(--surface-border)' }}>
+                      <h3 className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'var(--accent)' }}>
                         Scan Image
                       </h3>
-                      <p className="text-white text-sm truncate">{wsiFile?.name}</p>
-                      <p className="text-xs text-slate-400 mt-1">{(wsiFile?.size / (1024 * 1024)).toFixed(2)} MB</p>
+                      <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{wsiFile?.name}</p>
+                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{(wsiFile?.size / (1024 * 1024)).toFixed(2)} MB</p>
                     </div>
 
                     {/* Clinical summary */}
-                    <div className="glass p-4 rounded-xl border border-purple-500/20 bg-purple-500/5">
-                      <h3 className="text-xs font-semibold text-purple-400 mb-2 uppercase tracking-wide">
+                    <div className="p-4 rounded-xl" style={{ background: 'var(--surface-base)', border: '1px solid var(--surface-border)' }}>
+                      <h3 className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'var(--accent)' }}>
                         {mode === 'patient' ? 'Known Parameters' : 'Clinical Panel'}
                       </h3>
                       {mode === 'patient' ? (
                         <div>
-                          <p className="text-white text-sm">Age: {patientAge} years</p>
-                          <p className="text-xs text-slate-400 mt-1">
+                          <p className="text-sm" style={{ color: 'var(--text-primary)' }}>Age: {patientAge} years</p>
+                          <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
                             9 remaining fields will be AI-estimated from the scan.
                           </p>
                         </div>
                       ) : (
                         <div>
-                          <p className="text-white text-sm">
+                          <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
                             Age: {clinicalData.age} | Tumor: {clinicalData.tumor_size}mm | Grade: {clinicalData.grade}
                           </p>
-                          <p className="text-xs text-slate-400 mt-1">
+                          <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
                             [{clinicalData.er_status ? 'ER+' : 'ER-'}
                             {' '}{clinicalData.pr_status ? 'PR+' : 'PR-'}
                             {' '}{clinicalData.her2_status ? 'HER2+' : 'HER2-'}]
@@ -430,12 +430,12 @@ const NewCasePage = () => {
 
                   {/* Mode info panel */}
                   {mode === 'patient' && (
-                    <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                    <div className="p-4 rounded-xl" style={{ background: 'var(--accent-dim)', border: '1px solid var(--accent-glow)' }}>
                       <div className="flex gap-3">
-                        <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
+                        <Sparkles className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
                         <div>
-                          <p className="text-sm font-semibold text-indigo-300">Radiomics-Based Estimation</p>
-                          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                          <p className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>Radiomics-Based Estimation</p>
+                          <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                             The AI will extract radiomic features (intensity, texture, edge patterns)
                             from your image to predict Grade, KI67, ER/PR/HER2 status, and other
                             markers before running the diagnostic model. Results will show which
@@ -448,16 +448,16 @@ const NewCasePage = () => {
 
                   {/* Disclaimer reminder for clinician mode */}
                   {mode === 'clinician' && (
-                    <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                      <p className="text-xs text-amber-300 leading-relaxed">
-                        ⚠ <strong>Research Use Only:</strong> This AI system is a research prototype.
+                    <div className="p-4 rounded-xl" style={{ background: 'rgba(150,106,40,0.08)', border: '1px solid rgba(150,106,40,0.2)' }}>
+                      <p className="text-xs leading-relaxed" style={{ color: 'var(--role-warning)' }}>
+                        <strong>Research Use Only:</strong> This AI system is a research prototype.
                         Results should not replace clinical judgement or established diagnostic protocols.
                       </p>
                     </div>
                   )}
 
                   <button onClick={handleSubmit} className="btn-primary w-full py-4 text-base font-bold">
-                    🔬 Run Diagnostic Analysis
+                    Run Diagnostic Analysis
                   </button>
                 </div>
               )}
@@ -465,7 +465,7 @@ const NewCasePage = () => {
 
             {/* Navigation */}
             {step > 0 && (
-              <div className="mt-8 pt-6 border-t border-white/10 flex justify-between">
+              <div className="mt-8 pt-6 flex justify-between" style={{ borderTop: '1px solid var(--surface-border)' }}>
                 <button
                   onClick={() => step === 1 ? setStep(0) : setStep(s => s - 1)}
                   className="btn-secondary flex items-center gap-2"

@@ -24,29 +24,29 @@ const ConfidenceIntervalBar = ({ confidence, lower, upper, patientMode }) => {
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex justify-between items-center text-xs">
-        <span className="text-slate-400">Confidence</span>
-        <span className="font-bold text-white">{pct}%</span>
+        <span style={{ color: 'var(--text-secondary)' }}>Confidence</span>
+        <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{pct}%</span>
       </div>
       {/* Bar */}
-      <div className="relative h-3 bg-white/10 rounded-full overflow-visible">
+      <div className="relative h-3 rounded-full overflow-visible" style={{ background: 'var(--surface-base)' }}>
         {/* CI range shading */}
         <div
           className="absolute top-0 h-full rounded-full opacity-30"
           style={{
             left: `${lPct}%`,
             width: `${uPct - lPct}%`,
-            background: 'linear-gradient(90deg, #6366f1, #a855f7)',
+            background: 'var(--accent)',
           }}
         />
         {/* Point estimate */}
         <div
-          className="absolute top-0 h-full w-1 bg-white rounded-full shadow-lg"
-          style={{ left: `${pct}%` }}
+          className="absolute top-0 h-full w-1 rounded-full"
+          style={{ left: `${pct}%`, background: 'var(--text-primary)', boxShadow: 'var(--shadow-raised)' }}
         />
       </div>
-      <div className="flex justify-between text-[10px] text-slate-500">
+      <div className="flex justify-between text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
         <span>{lPct}% (lower bound)</span>
-        {patientMode && <span className="text-amber-400">Wider CI — estimated parameters</span>}
+        {patientMode && <span style={{ color: 'var(--role-warning)' }}>Wider CI — estimated parameters</span>}
         <span>{uPct}% (upper bound)</span>
       </div>
     </div>
@@ -55,31 +55,33 @@ const ConfidenceIntervalBar = ({ confidence, lower, upper, patientMode }) => {
 
 // ─── Early Warning Score card (for patient mode) ──────────────────────────────
 const EarlyWarningCard = ({ diagnosis, confidence, lower, upper }) => {
-  const isMal    = diagnosis?.toLowerCase() === 'malignant';
-  const pct      = Math.round(confidence * 100);
-  const lPct     = Math.round(lower * 100);
-  const uPct     = Math.round(upper * 100);
+  const pct  = Math.round(confidence * 100);
+  const lPct = Math.round(lower * 100);
+  const uPct = Math.round(upper * 100);
 
   // Map to a 1-5 risk score
-  let score, label, color, desc;
-  if (pct < 40)        { score = 1; label = 'Very Low Risk'; color = 'emerald'; desc = 'Screening suggests low concern. Routine check-up recommended.'; }
-  else if (pct < 55)   { score = 2; label = 'Low-Moderate Risk'; color = 'lime';    desc = 'Some indicators present. Follow-up screening advised.'; }
-  else if (pct < 70)   { score = 3; label = 'Moderate Risk'; color = 'amber';   desc = 'Notable indicators detected. Prompt consultation recommended.'; }
-  else if (pct < 85)   { score = 4; label = 'High Risk'; color = 'orange';  desc = 'Significant indicators detected. Urgent medical consultation required.'; }
-  else                  { score = 5; label = 'Very High Risk'; color = 'rose';    desc = 'Strong indicators of concern. Seek immediate medical attention.'; }
+  let score, label, roleColor, desc;
+  if (pct < 40)        { score = 1; label = 'Very Low Risk';  roleColor = 'var(--role-benign)';   desc = 'Screening suggests low concern. Routine check-up recommended.'; }
+  else if (pct < 55)   { score = 2; label = 'Low-Moderate Risk'; roleColor = '#5a8a4a'; desc = 'Some indicators present. Follow-up screening advised.'; }
+  else if (pct < 70)   { score = 3; label = 'Moderate Risk';   roleColor = 'var(--role-warning)';  desc = 'Notable indicators detected. Prompt consultation recommended.'; }
+  else if (pct < 85)   { score = 4; label = 'High Risk';       roleColor = '#b85c1a'; desc = 'Significant indicators detected. Urgent medical consultation required.'; }
+  else                  { score = 5; label = 'Very High Risk';  roleColor = 'var(--role-malignant)'; desc = 'Strong indicators of concern. Seek immediate medical attention.'; }
 
   return (
-    <div className={`glass rounded-2xl p-6 border border-${color}-500/30 bg-${color}-500/5`}>
+    <div className="surface-elevated rounded-2xl p-6" style={{ border: `1px solid ${roleColor}30` }}>
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">
+          <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--text-tertiary)' }}>
             Early Warning Score
           </p>
-          <h2 className={`text-2xl font-bold text-${color}-400`}>{label}</h2>
+          <h2 className="text-2xl font-bold" style={{ color: roleColor }}>{label}</h2>
         </div>
-        <div className={`w-14 h-14 rounded-xl bg-${color}-500/20 flex flex-col items-center justify-center border border-${color}-500/30`}>
-          <span className={`text-2xl font-black text-${color}-400`}>{score}</span>
-          <span className="text-[9px] text-slate-400 font-medium">/ 5</span>
+        <div
+          className="w-14 h-14 rounded-xl flex flex-col items-center justify-center"
+          style={{ background: `${roleColor}15`, border: `1px solid ${roleColor}25` }}
+        >
+          <span className="text-2xl font-black" style={{ color: roleColor }}>{score}</span>
+          <span className="text-[9px] font-medium" style={{ color: 'var(--text-tertiary)' }}>/ 5</span>
         </div>
       </div>
 
@@ -88,14 +90,13 @@ const EarlyWarningCard = ({ diagnosis, confidence, lower, upper }) => {
         {[1,2,3,4,5].map(i => (
           <div
             key={i}
-            className={`flex-1 h-2 rounded-full transition-all ${
-              i <= score ? `bg-${color}-500` : 'bg-white/10'
-            }`}
+            className="flex-1 h-2 rounded-full transition-all"
+            style={{ background: i <= score ? roleColor : 'var(--surface-base)' }}
           />
         ))}
       </div>
 
-      <p className="text-sm text-slate-300 leading-relaxed mb-4">{desc}</p>
+      <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>{desc}</p>
 
       <ConfidenceIntervalBar
         confidence={confidence}
@@ -104,7 +105,7 @@ const EarlyWarningCard = ({ diagnosis, confidence, lower, upper }) => {
         patientMode={true}
       />
 
-      <p className="mt-3 text-[11px] text-slate-500">
+      <p className="mt-3 text-[11px]" style={{ color: 'var(--text-tertiary)' }}>
         Range: {lPct}%–{uPct}% (wider because clinical data was AI-estimated)
       </p>
     </div>
@@ -128,7 +129,7 @@ const InferenceResultPage = () => {
       const { inferenceResult, ...caseFields } = flat;
       setCaseData(caseFields);
       setResult(inferenceResult || null);
-      return caseFields.status !== 'processing'; // true = done polling
+      return caseFields.status !== 'processing';
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load case');
       return true;
@@ -176,9 +177,9 @@ const InferenceResultPage = () => {
   if (analyzing) return <LoadingOverlay message="AI is analysing your scan... This may take a moment." />;
   if (error) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <AlertTriangle className="w-16 h-16 text-rose-400" />
-      <h2 className="text-xl font-semibold text-white">Error Loading Case</h2>
-      <p className="text-slate-400">{error}</p>
+      <AlertTriangle className="w-16 h-16" style={{ color: 'var(--role-malignant)' }} />
+      <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>Error Loading Case</h2>
+      <p style={{ color: 'var(--text-secondary)' }}>{error}</p>
       <button onClick={() => navigate('/cases')} className="btn-secondary">← Back to Cases</button>
     </div>
   );
@@ -188,30 +189,29 @@ const InferenceResultPage = () => {
   const isPending    = caseData?.status === 'pending';
   const isComplete   = caseData?.status === 'complete';
 
-  // Detect patient mode from result (Mongoose returns camelCase field names)
   const patientMode = result?.patientMode === true;
   const estData     = result?.estimatedClinicalData || null;
   const confLower   = result?.confidenceLower ?? (result?.confidence ? result.confidence - 0.05 : 0);
   const confUpper   = result?.confidenceUpper ?? (result?.confidence ? result.confidence + 0.05 : 1);
 
   return (
-    <div className="space-y-6 animate-fade-in pb-20 print:bg-white print:text-black">
+    <div className="space-y-6 animate-fade-up pb-20 print:bg-white print:text-black">
 
       {/* ── RESEARCH WATERMARK (print-only) ─────────────────────────────── */}
-      <div className="hidden print:flex items-center justify-center py-3 mb-4 border-2 border-red-600 rounded-lg">
-        <p className="text-red-600 font-black text-lg text-center tracking-widest uppercase">
-          ⚠ FOR RESEARCH USE ONLY — NOT A MEDICAL DIAGNOSIS ⚠
+      <div className="hidden print:flex items-center justify-center py-3 mb-4 border-2 rounded-lg" style={{ borderColor: 'var(--role-malignant)' }}>
+        <p className="font-black text-lg text-center tracking-widest uppercase" style={{ color: 'var(--role-malignant)' }}>
+          FOR RESEARCH USE ONLY — NOT A MEDICAL DIAGNOSIS
         </p>
       </div>
 
       {/* ── ETHICAL DISCLAIMER BANNER ────────────────────────────────────── */}
-      <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/25 print:hidden">
-        <ShieldAlert className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+      <div className="flex items-start gap-3 p-4 rounded-xl print:hidden" style={{ background: 'var(--role-warning)10', border: '1px solid var(--role-warning)25' }}>
+        <ShieldAlert className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--role-warning)' }} />
         <div className="flex-1">
-          <p className="text-sm font-semibold text-amber-300">Research Screening Tool — Not a Medical Diagnosis</p>
-          <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
+          <p className="text-sm font-semibold" style={{ color: 'var(--role-warning)' }}>Research Screening Tool — Not a Medical Diagnosis</p>
+          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
             This AI result is for research and educational purposes only. It must{' '}
-            <strong className="text-amber-400">not</strong> replace consultation with a qualified
+            <strong style={{ color: 'var(--role-warning)' }}>not</strong> replace consultation with a qualified
             oncologist, radiologist, or physician. If you have health concerns, please seek
             immediate professional medical advice.
           </p>
@@ -220,13 +220,13 @@ const InferenceResultPage = () => {
 
       {/* ── PATIENT MODE BANNER ──────────────────────────────────────────── */}
       {patientMode && isComplete && (
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-          <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'var(--accent-dim)', border: '1px solid var(--accent-glow)' }}>
+          <Sparkles className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} />
           <div>
-            <p className="text-sm font-semibold text-indigo-300">Patient Mode — AI-Estimated Clinical Profile</p>
-            <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
+            <p className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>Patient Mode — AI-Estimated Clinical Profile</p>
+            <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Clinical parameters were estimated from your scan using radiomics analysis.
-              Results show an <strong className="text-white">Early Warning Score</strong> with wider
+              Results show an <strong style={{ color: 'var(--text-primary)' }}>Early Warning Score</strong> with wider
               confidence intervals to reflect this uncertainty. Expand the clinical panel below
               to see what was estimated and each feature's confidence level.
             </p>
@@ -239,18 +239,19 @@ const InferenceResultPage = () => {
         <div>
           <button
             onClick={() => navigate('/cases')}
-            className="flex items-center gap-1 text-slate-400 hover:text-white text-sm mb-2 transition-colors print:hidden"
+            className="flex items-center gap-1 text-sm mb-2 transition-colors print:hidden"
+            style={{ color: 'var(--text-secondary)' }}
           >
             <ChevronLeft size={16} /> Back to Cases
           </button>
-          <h1 className="text-2xl font-bold text-white tracking-tight flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-bold tracking-tight flex flex-wrap items-center gap-3" style={{ color: 'var(--text-primary)' }}>
             {patientMode ? 'Screening Report' : 'Analysis Report'}
-            <span className="text-sm font-mono text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-md border border-indigo-500/20">
+            <span className="text-sm font-mono px-2 py-1 rounded-md" style={{ background: 'var(--accent-dim)', color: 'var(--accent)', border: '1px solid var(--accent-glow)' }}>
               {truncateUUID(caseData?.patientUUID)}
             </span>
             <StatusBadge status={caseData?.status} />
             {patientMode && (
-              <span className="text-xs font-semibold text-indigo-300 bg-indigo-500/15 px-2 py-1 rounded-full border border-indigo-500/20 flex items-center gap-1">
+              <span className="chip-accent flex items-center gap-1">
                 <Sparkles size={10} /> Patient Mode
               </span>
             )}
@@ -272,55 +273,55 @@ const InferenceResultPage = () => {
       </div>
 
       {/* ── PATIENT META ─────────────────────────────────────────────────── */}
-      <div className="glass p-4 rounded-xl flex flex-wrap gap-6 text-sm">
-        <div className="flex items-center gap-2 text-slate-300">
-          <User size={16} className="text-slate-500" />
-          <span className="text-slate-400">Patient UUID:</span>
-          <span className="font-mono font-medium text-white">{caseData?.patientUUID}</span>
+      <div className="surface p-4 rounded-xl flex flex-wrap gap-6 text-sm">
+        <div className="flex items-center gap-2">
+          <User size={16} style={{ color: 'var(--text-tertiary)' }} />
+          <span style={{ color: 'var(--text-secondary)' }}>Patient UUID:</span>
+          <span className="font-mono font-medium" style={{ color: 'var(--text-primary)' }}>{caseData?.patientUUID}</span>
         </div>
-        <div className="flex items-center gap-2 text-slate-300">
-          <FileText size={16} className="text-slate-500" />
-          <span className="text-slate-400">Date:</span>
-          <span className="font-medium text-white">{formatDate(caseData?.createdAt)}</span>
+        <div className="flex items-center gap-2">
+          <FileText size={16} style={{ color: 'var(--text-tertiary)' }} />
+          <span style={{ color: 'var(--text-secondary)' }}>Date:</span>
+          <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{formatDate(caseData?.createdAt)}</span>
         </div>
         <div className="flex items-center gap-2">
           {patientMode
-            ? <span className="flex items-center gap-1 text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20"><Sparkles size={10} /> Patient Mode</span>
-            : <span className="flex items-center gap-1 text-xs text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20"><Stethoscope size={10} /> Clinician Mode</span>
+            ? <span className="chip-accent flex items-center gap-1"><Sparkles size={10} /> Patient Mode</span>
+            : <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: 'var(--accent-dim)', color: 'var(--accent)', border: '1px solid var(--accent-glow)' }}><Stethoscope size={10} /> Clinician Mode</span>
           }
         </div>
       </div>
 
       {/* ── PROCESSING STATE ─────────────────────────────────────────────── */}
       {isProcessing && (
-        <div className="glass p-8 flex flex-col items-center gap-4 text-center">
-          <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-white font-semibold text-lg">AI Model is Analysing...</p>
-          <p className="text-slate-400 text-sm">
+        <div className="glass-surface p-8 flex flex-col items-center gap-4 text-center">
+          <div className="w-12 h-12 border-4 rounded-full animate-spin" style={{ borderColor: 'var(--accent)', borderTopColor: 'transparent' }} />
+          <p className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>AI Model is Analysing...</p>
+          <p style={{ color: 'var(--text-secondary)' }} className="text-sm">
             {patientMode
               ? 'Extracting radiomic features, estimating clinical profile, running diagnostic model...'
               : 'Running multimodal fusion through ResNet50 + MLP + Cross-Attention layers...'}
           </p>
-          <p className="text-slate-500 text-xs">This page updates automatically.</p>
+          <p style={{ color: 'var(--text-tertiary)' }} className="text-xs">This page updates automatically.</p>
         </div>
       )}
 
       {/* ── FAILED STATE ─────────────────────────────────────────────────── */}
       {isFailed && (
-        <div className="glass p-8 flex flex-col items-center gap-4 text-center border border-rose-500/20">
-          <AlertTriangle className="w-12 h-12 text-rose-400" />
-          <p className="text-white font-semibold text-lg">Analysis Failed</p>
-          <p className="text-slate-400 text-sm">The ML service encountered an error. Please retry.</p>
+        <div className="glass-surface p-8 flex flex-col items-center gap-4 text-center" style={{ border: '1px solid rgba(192,48,64,0.2)' }}>
+          <AlertTriangle className="w-12 h-12" style={{ color: 'var(--role-malignant)' }} />
+          <p className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>Analysis Failed</p>
+          <p style={{ color: 'var(--text-secondary)' }} className="text-sm">The ML service encountered an error. Please retry.</p>
           <button onClick={handleAnalyze} className="btn-primary mt-2">Retry Analysis</button>
         </div>
       )}
 
       {/* ── PENDING STATE ────────────────────────────────────────────────── */}
       {isPending && (
-        <div className="glass p-8 flex flex-col items-center gap-4 text-center border border-amber-500/20">
-          <RefreshCw className="w-10 h-10 text-amber-400" />
-          <p className="text-white font-semibold text-lg">Analysis Not Started</p>
-          <p className="text-slate-400 text-sm">Click "Run Analysis" to begin the AI diagnostic pipeline.</p>
+        <div className="glass-surface p-8 flex flex-col items-center gap-4 text-center" style={{ border: '1px solid var(--role-warning)30' }}>
+          <RefreshCw className="w-10 h-10" style={{ color: 'var(--role-warning)' }} />
+          <p className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>Analysis Not Started</p>
+          <p style={{ color: 'var(--text-secondary)' }} className="text-sm">Click "Run Analysis" to begin the AI diagnostic pipeline.</p>
         </div>
       )}
 
@@ -378,26 +379,25 @@ const InferenceResultPage = () => {
           </div>
 
           {/* Row 4: Metadata + Watermark */}
-          <div className="glass p-4 rounded-xl">
-            <div className="flex flex-wrap gap-6 text-xs text-slate-500 mb-3">
-              <span>Model: <span className="text-slate-400">{result.modelVersion}</span></span>
-              <span>Time: <span className="text-slate-400">{Math.round(result.processingTimeMs)}ms</span></span>
-              <span>Demo Mode: <span className="text-slate-400">{result.demoMode ? 'Yes' : 'No'}</span></span>
+          <div className="surface p-4 rounded-xl">
+            <div className="flex flex-wrap gap-6 text-xs mb-3" style={{ color: 'var(--text-tertiary)' }}>
+              <span>Model: <span style={{ color: 'var(--text-secondary)' }}>{result.modelVersion}</span></span>
+              <span>Time: <span style={{ color: 'var(--text-secondary)' }}>{Math.round(result.processingTimeMs)}ms</span></span>
+              <span>Demo Mode: <span style={{ color: 'var(--text-secondary)' }}>{result.demoMode ? 'Yes' : 'No'}</span></span>
               <span>
                 Data Completeness:{' '}
-                <span className={
-                  (estData?.data_completeness_score ?? 1) < 0.5
-                    ? 'text-amber-400'
-                    : 'text-emerald-400'
-                }>
+                <span style={{
+                  color: (estData?.data_completeness_score ?? 1) < 0.5
+                    ? 'var(--role-warning)'
+                    : 'var(--role-benign)'
+                }}>
                   {Math.round((estData?.data_completeness_score ?? 1) * 100)}%
                 </span>
               </span>
             </div>
-            {/* Visible watermark */}
-            <div className="flex items-center gap-2 pt-3 border-t border-white/10">
-              <Info size={14} className="text-slate-600 flex-shrink-0" />
-              <p className="text-[11px] text-slate-600 font-semibold tracking-wide uppercase">
+            <div className="flex items-center gap-2 pt-3" style={{ borderTop: '1px solid var(--surface-border)' }}>
+              <Info size={14} style={{ color: 'var(--text-tertiary)' }} />
+              <p className="text-[11px] font-semibold tracking-wide uppercase" style={{ color: 'var(--text-tertiary)' }}>
                 For Research & Educational Use Only — Not a Clinical Diagnostic Tool
               </p>
             </div>

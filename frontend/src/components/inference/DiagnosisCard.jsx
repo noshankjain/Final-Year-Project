@@ -38,7 +38,7 @@ const DiagnosisCard = ({ diagnosis, confidence, confidenceLower, confidenceUpper
               animationDuration={1200}
             >
               <Cell fill={color} />
-              <Cell fill="rgba(255,255,255,0.06)" />
+              <Cell fill="var(--surface-base)" />
             </Pie>
           </PieChart>
         </ResponsiveContainer>

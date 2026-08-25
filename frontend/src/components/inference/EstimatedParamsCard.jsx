@@ -111,7 +111,7 @@ const EstimatedParamsCard = ({ estimatedClinicalData, patientMode }) => {
                   key={key}
                   className="flex items-center justify-between p-3 rounded-lg"
                   style={{
-                    background: isUser ? 'rgba(16,185,129,0.06)' : 'rgba(255,255,255,0.03)',
+                    background: isUser ? 'rgba(16,185,129,0.06)' : 'var(--surface-base)',
                     border:     `1px solid ${isUser ? 'rgba(16,185,129,0.15)' : 'var(--surface-border)'}`,
                   }}
                 >

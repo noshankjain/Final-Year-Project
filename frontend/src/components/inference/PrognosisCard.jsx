@@ -43,7 +43,7 @@ const PrognosisCard = ({ survivalProbability, prognosisScore }) => {
               <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
               <RadialBar
                 minAngle={15}
-                background={{ fill: 'rgba(255,255,255,0.05)' }}
+                background={{ fill: 'var(--surface-base)' }}
                 clockWise
                 dataKey="value"
                 cornerRadius={10}

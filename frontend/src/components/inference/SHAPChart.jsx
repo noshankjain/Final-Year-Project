@@ -74,7 +74,7 @@ const SHAPChart = ({ shapValues = {} }) => {
               width={94}
             />
             <Tooltip
-              cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+              cursor={{ fill: 'var(--surface-base)' }}
               content={<CustomTooltip />}
             />
             <ReferenceLine x={0} stroke="var(--surface-border-hi)" />

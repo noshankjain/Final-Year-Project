@@ -1,5 +1,4 @@
 import React from 'react';
-import { cn } from '../../utils/helpers';
 
 const ClinicalForm = ({ values, onChange }) => {
   
@@ -15,11 +14,22 @@ const ClinicalForm = ({ values, onChange }) => {
   };
 
   const Switch = ({ label, field, checked }) => (
-    <div className="flex items-center justify-between p-4 glass rounded-xl">
-      <span className="text-sm font-medium text-slate-300">{label}</span>
+    <div className="flex items-center justify-between p-4 surface rounded-xl">
+      <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{label}</span>
       <label className="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" className="sr-only peer" checked={checked || false} onChange={handleChange(field)} />
-        <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+        <input
+          type="checkbox"
+          className="sr-only peer"
+          checked={checked || false}
+          onChange={handleChange(field)}
+        />
+        <div
+          className="w-11 h-6 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"
+          style={{
+            background: checked ? 'var(--accent)' : 'var(--surface-overlay)',
+            transition: 'background 0.2s ease',
+          }}
+        />
       </label>
     </div>
   );
@@ -28,7 +38,7 @@ const ClinicalForm = ({ values, onChange }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-300">Patient Age</label>
+        <label className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Patient Age</label>
         <input 
           type="number" 
           className="input-field" 
@@ -40,7 +50,7 @@ const ClinicalForm = ({ values, onChange }) => {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-300">Tumor Size (mm)</label>
+        <label className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Tumor Size (mm)</label>
         <input 
           type="number" 
           className="input-field" 
@@ -52,7 +62,7 @@ const ClinicalForm = ({ values, onChange }) => {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-300">Positive Lymph Nodes</label>
+        <label className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Positive Lymph Nodes</label>
         <input 
           type="number" 
           className="input-field" 
@@ -64,9 +74,9 @@ const ClinicalForm = ({ values, onChange }) => {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-300">Histological Grade</label>
+        <label className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Histological Grade</label>
         <select 
-          className="input-field appearance-none bg-navy-800"
+          className="input-field appearance-none" 
           value={values.grade || ''} 
           onChange={handleChange('grade')}
         >
@@ -79,12 +89,16 @@ const ClinicalForm = ({ values, onChange }) => {
 
       <div className="space-y-2 md:col-span-2">
         <div className="flex justify-between">
-          <label className="text-sm font-medium text-slate-300">Ki-67 Proliferation Index</label>
-          <span className="text-sm font-bold text-indigo-400">{values.ki67 || 0}%</span>
+          <label className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Ki-67 Proliferation Index</label>
+          <span className="text-sm font-bold font-mono" style={{ color: 'var(--accent)' }}>{values.ki67 || 0}%</span>
         </div>
         <input 
           type="range" 
-          className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+          className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+          style={{
+            background: `linear-gradient(to right, var(--accent) ${values.ki67 || 0}%, var(--surface-overlay) ${values.ki67 || 0}%)`,
+            accentColor: 'var(--accent)',
+          }}
           value={values.ki67 || 0} 
           onChange={handleChange('ki67')}
           min="0" max="100"

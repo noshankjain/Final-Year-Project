@@ -19,7 +19,7 @@ const DiagnosisCard = ({ diagnosis, confidence, confidenceLower, confidenceUpper
   ];
 
   return (
-    <div className="surface-elevated h-full flex flex-col items-center justify-center p-6 gap-5">
+    <div className="surface-elevated flex flex-col items-center justify-center p-6 gap-5">
       {/* Donut chart */}
       <div className="relative w-40 h-40 flex-shrink-0">
         <ResponsiveContainer width="100%" height="100%">

@@ -189,10 +189,18 @@ const InferenceResultPage = () => {
   const isPending    = caseData?.status === 'pending';
   const isComplete   = caseData?.status === 'complete';
 
-  const patientMode = result?.patientMode === true;
-  const estData     = result?.estimatedClinicalData || null;
-  const confLower   = result?.confidenceLower ?? (result?.confidence ? result.confidence - 0.05 : 0);
-  const confUpper   = result?.confidenceUpper ?? (result?.confidence ? result.confidence + 0.05 : 1);
+  const patientMode  = result?.patientMode === true;
+  const estData      = result?.estimatedClinicalData || null;
+  const confLower    = result?.confidenceLower ?? (result?.confidence ? result.confidence - 0.05 : 0);
+  const confUpper    = result?.confidenceUpper ?? (result?.confidence ? result.confidence + 0.05 : 1);
+
+  // Incoherence flag: diagnosis says benign (low malignancy confidence) but
+  // prognosis shows high risk. The two heads are independent sigmoid outputs —
+  // prognosis is driven by clinical parameters, not the image diagnosis result.
+  const isBenignHighRisk = isComplete && result &&
+    result.diagnosis === 'benign' &&
+    (result.confidence ?? 0) < 0.35 &&
+    (result.survivalProbability ?? 1) < 0.55;
 
   return (
     <div className="space-y-6 animate-fade-up pb-20 print:bg-white print:text-black">
@@ -205,7 +213,7 @@ const InferenceResultPage = () => {
       </div>
 
       {/* ── ETHICAL DISCLAIMER BANNER ────────────────────────────────────── */}
-      <div className="flex items-start gap-3 p-4 rounded-xl print:hidden" style={{ background: 'var(--role-warning)10', border: '1px solid var(--role-warning)25' }}>
+      <div className="flex items-start gap-3 p-4 rounded-xl print:hidden" style={{ background: 'rgba(150,106,40,0.10)', border: '1px solid rgba(150,106,40,0.25)' }}>
         <ShieldAlert className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--role-warning)' }} />
         <div className="flex-1">
           <p className="text-sm font-semibold" style={{ color: 'var(--role-warning)' }}>Research Screening Tool — Not a Medical Diagnosis</p>
@@ -217,6 +225,29 @@ const InferenceResultPage = () => {
           </p>
         </div>
       </div>
+
+      {/* ── INCOHERENCE WARNING — benign image but high-risk prognosis ───── */}
+      {isBenignHighRisk && (
+        <div className="flex items-start gap-3 p-4 rounded-xl print:hidden" style={{ background: 'rgba(192,48,64,0.08)', border: '1px solid rgba(192,48,64,0.22)' }}>
+          <Info className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--role-malignant)' }} />
+          <div>
+            <p className="text-sm font-semibold" style={{ color: 'var(--role-malignant)' }}>
+              Note: Diagnosis and Prognosis results appear contradictory
+            </p>
+            <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              The image analysis head classified this case as <strong style={{ color: 'var(--role-benign)' }}>Benign</strong>,
+              but the prognosis head shows a high-risk survival estimate. This happens because the two AI
+              heads are <strong style={{ color: 'var(--text-primary)' }}>independent models</strong> — the
+              prognosis is calculated entirely from the clinical parameters you entered (tumor size, grade,
+              receptor status, etc.), not from the image finding. If the clinical data entered represents an
+              aggressive profile, the prognosis head will reflect that regardless of the image result.{' '}
+              <strong style={{ color: 'var(--text-primary)' }}>
+                In this case, prioritise the clinical diagnosis from your oncologist over these AI estimates.
+              </strong>
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── PATIENT MODE BANNER ──────────────────────────────────────────── */}
       {patientMode && isComplete && (
